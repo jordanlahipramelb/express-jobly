@@ -11,31 +11,30 @@ async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM companies");
 
-  await Company.create(
-      {
-        handle: "c1",
-        name: "C1",
-        numEmployees: 1,
-        description: "Desc1",
-        logoUrl: "http://c1.img",
-      });
-  await Company.create(
-      {
-        handle: "c2",
-        name: "C2",
-        numEmployees: 2,
-        description: "Desc2",
-        logoUrl: "http://c2.img",
-      });
-  await Company.create(
-      {
-        handle: "c3",
-        name: "C3",
-        numEmployees: 3,
-        description: "Desc3",
-        logoUrl: "http://c3.img",
-      });
+  // Create companies
+  await Company.create({
+    handle: "c1",
+    name: "C1",
+    numEmployees: 1,
+    description: "Desc1",
+    logoUrl: "http://c1.img",
+  });
+  await Company.create({
+    handle: "c2",
+    name: "C2",
+    numEmployees: 2,
+    description: "Desc2",
+    logoUrl: "http://c2.img",
+  });
+  await Company.create({
+    handle: "c3",
+    name: "C3",
+    numEmployees: 3,
+    description: "Desc3",
+    logoUrl: "http://c3.img",
+  });
 
+  // Create Users
   await User.register({
     username: "u1",
     firstName: "U1F",
@@ -60,6 +59,8 @@ async function commonBeforeAll() {
     password: "password3",
     isAdmin: false,
   });
+
+  // Create jobs
 }
 
 async function commonBeforeEach() {
@@ -74,9 +75,9 @@ async function commonAfterAll() {
   await db.end();
 }
 
-
 const u1Token = createToken({ username: "u1", isAdmin: false });
-
+const u2Token = createToken({ username: "u2", isAdmin: false });
+const adminToken = createToken({ username: "adminUser", isAdmin: true });
 
 module.exports = {
   commonBeforeAll,
@@ -84,4 +85,6 @@ module.exports = {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  u2Token,
+  adminToken,
 };
