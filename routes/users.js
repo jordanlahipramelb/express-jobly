@@ -45,6 +45,23 @@ router.post("/", ensureAdmin, async function (req, res, next) {
   }
 });
 
+router.post(
+  "/:username/jobs/:id",
+  ensureAdminOrCorrectUser,
+  async (req, res, next) => {
+    try {
+      const jobId = +req.params.id;
+      const username = req.params.username;
+
+      await User.applyToJob(username, jobId);
+
+      return res.json({ applied: jobId });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of all users.
@@ -65,17 +82,21 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  *
  * Returns { username, firstName, lastName, isAdmin }
  *
- * Authorization required: login
+ * Authorization required: admin or same user
  **/
 
-router.get("/:username", ensureLoggedIn, async function (req, res, next) {
-  try {
-    const user = await User.get(req.params.username);
-    return res.json({ user });
-  } catch (err) {
-    return next(err);
+router.get(
+  "/:username",
+  ensureAdminOrCorrectUser,
+  async function (req, res, next) {
+    try {
+      const user = await User.get(req.params.username);
+      return res.json({ user });
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
 
 /** PATCH /[username] { user } => { user }
  *

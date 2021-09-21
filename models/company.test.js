@@ -8,7 +8,7 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-} = require("./_testCommon");
+} = require("./_testCommon"); //test data located here
 
 const company = require("./company");
 beforeAll(commonBeforeAll);

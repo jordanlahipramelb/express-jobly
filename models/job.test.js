@@ -1,15 +1,15 @@
 "use strict";
 
 const { NotFoundError, BadRequestError } = require("../expressError");
-const db = require("../db.js");
-const Job = require("./job.js");
+const db = require("../db");
+const Job = require("../models/job");
 const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
   testJobIds,
-} = require("./_testCommon");
+} = require("./_testCommon"); //test data located here
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -76,7 +76,7 @@ describe("findAll", function () {
     ]);
   });
 
-  test("works: by name", async function () {
+  test("works: name filter", async function () {
     let jobs = await Job.findAll({ title: "b1" });
     expect(jobs).toEqual([
       {
@@ -90,7 +90,7 @@ describe("findAll", function () {
     ]);
   });
 
-  test("works: min salary", async function () {
+  test("works: min salary filter", async function () {
     let jobs = await Job.findAll({ minSalary: 25 });
     expect(jobs).toEqual([
       {
@@ -104,7 +104,7 @@ describe("findAll", function () {
     ]);
   });
 
-  test("works: equity", async function () {
+  test("works: equity filter", async function () {
     let jobs = await Job.findAll({ hasEquity: true });
     expect(jobs).toEqual([
       {
@@ -126,7 +126,7 @@ describe("findAll", function () {
     ]);
   });
 
-  test("works: min salary & equity", async function () {
+  test("works: min salary & equity filter", async function () {
     let jobs = await Job.findAll({ minSalary: 15, hasEquity: true });
     expect(jobs).toEqual([
       {
@@ -143,8 +143,8 @@ describe("findAll", function () {
 
 /************************************** get */
 
-describe("get(id)", function () {
-  test("works", async function () {
+describe("get()", function () {
+  test("get job by id", async function () {
     let job = await Job.get(testJobIds[0]);
     expect(job).toEqual({
       id: testJobIds[0],
@@ -161,19 +161,19 @@ describe("get(id)", function () {
     });
   });
 
-  test("not found if no such job", async function () {
+  test("not found if job not found", async function () {
     try {
       await Job.get(0);
       fail();
     } catch (err) {
-      expect(err instanceof NotFoundError).toBeTruthy();
+      expect(err instanceof NotFoundError).toBeTruthy(); //expect this value to be true
     }
   });
 });
 
 /************************************** update */
 
-describe("update", function () {
+describe("update job", function () {
   let data = {
     title: "updateData",
     salary: 1000,
@@ -220,7 +220,7 @@ describe("remove", function () {
     expect(res.rows.length).toEqual(0);
   });
 
-  test("not found if no such job", async function () {
+  test("not found error if job not found", async function () {
     try {
       await Job.remove(0);
       fail();
