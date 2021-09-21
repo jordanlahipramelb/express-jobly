@@ -123,6 +123,7 @@ class Company {
    **/
 
   static async get(handle) {
+    // retrieve data about company
     const companyRes = await db.query(
       `SELECT handle,
                   name,
@@ -137,6 +138,21 @@ class Company {
     const company = companyRes.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
+
+    // retrieve data about the company's jobs
+    const jobRes = await db.query(
+      `SELECT id, 
+              title, 
+              salary, 
+              equity
+          FROM jobs
+          WHERE company_handle = $1
+          ORDER BY id`,
+      [handle]
+    );
+
+    // create column with jobs associated with companies
+    company.job = jobRes.rows;
 
     return company;
   }
